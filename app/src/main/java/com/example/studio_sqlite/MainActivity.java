@@ -37,13 +37,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String toDo = et_todo.getText().toString();
+                DataModel dm;
                 if(Pattern.matches("s*", toDo)) {
-                    Toast.makeText(MainActivity.this, "Title needed", Toast.LENGTH_SHORT).show();
+                    dm = new DataModel(-1, "ERROR", "", false);
                 } else {
-                    DataModel dm = new DataModel(-1, toDo, et_descrip.getText().toString(), sw.isChecked());
-                    Toast.makeText(MainActivity.this, dm.toString(), Toast.LENGTH_LONG).show();
+                    dm = new DataModel(-1, toDo, et_descrip.getText().toString(), sw.isChecked());
                 }
 
+                DataBaseHelper dbHelper = new DataBaseHelper(MainActivity.this);
+                boolean success = dbHelper.addOne(dm);
+
+                Toast.makeText(MainActivity.this, "Success: " + success, Toast.LENGTH_SHORT).show();
             }
         });
     }
