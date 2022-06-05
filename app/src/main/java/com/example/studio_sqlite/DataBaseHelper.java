@@ -18,6 +18,7 @@ import java.util.List;
 public class DataBaseHelper extends SQLiteOpenHelper {
 
     public static final String TODO_TABLE = "TODO_TABLE";
+    public static final String COLUMN_ID = "ID";
     public static final String COLUMN_TODO_TITLE = "TODO_TITLE";
     public static final String COLUMN_TODO_DESCRIPTION = "TODO_DESCRIPTION";
     public static final String COLUMN_IMPORTANT = "IMPORTANT";
@@ -35,7 +36,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         String createTableStatement = "CREATE TABLE " + TODO_TABLE
-                + " (ID INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + COLUMN_TODO_TITLE + " TEXT, "
                 + COLUMN_TODO_DESCRIPTION + " TEXT, "
                 + COLUMN_IMPORTANT + " BOOL)";
@@ -73,11 +74,26 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         long insert = db.insert(TODO_TABLE, null, cv);
         //if insert is negative number than insert went wrong
-        //if insert is positive number than isnert succeeded
+        //if insert is positive number than insert succeeded
         if(insert == -1) {
             return false;
         } else {
             return true;
+        }
+    }
+
+    public boolean deleteOne(DataModel dModel) {
+        //if DataModel is found in the database, delete it and return true
+        //if it is not found, return false
+        SQLiteDatabase db = this.getWritableDatabase();
+        String queryString = "DELETE FROM " + TODO_TABLE + " WHERE " + COLUMN_ID + " = " + dModel.getId();
+
+        Cursor cursor = db.rawQuery(queryString, null);
+
+        if(cursor.moveToFirst()) {
+            return true;
+        } else {
+            return false;
         }
     }
 

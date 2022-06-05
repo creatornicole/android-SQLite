@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,6 +23,9 @@ public class MainActivity extends AppCompatActivity {
     EditText et_todo, et_descrip;
     Switch sw;
     ListView lv;
+    ArrayAdapter todoArrayAdapter;
+    List<DataModel> allTodos;
+    DataBaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +39,10 @@ public class MainActivity extends AppCompatActivity {
         et_descrip = findViewById(R.id.et_descrip);
         sw = findViewById(R.id.sw);
         lv = findViewById(R.id.lv);
+
+        dbHelper = new DataBaseHelper(MainActivity.this);
+
+        showAllToDos(dbHelper);
 
         //button click listeners
         btn_add.setOnClickListener(new View.OnClickListener() {
@@ -52,18 +60,34 @@ public class MainActivity extends AppCompatActivity {
                 boolean success = dbHelper.addOne(dm);
 
                 Toast.makeText(MainActivity.this, "Success: " + success, Toast.LENGTH_SHORT).show();
+
+                showAllToDos(dbHelper);
             }
         });
 
         btn_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DataBaseHelper dbHelper = new DataBaseHelper(MainActivity.this);
-                List<DataModel> allTodos = dbHelper.getAll();
-
-                ArrayAdapter todoArrayAdapter = new ArrayAdapter<DataModel>(MainActivity.this, android.R.layout.simple_list_item_1, allTodos);
-                lv.setAdapter(todoArrayAdapter);
+                dbHelper = new DataBaseHelper(MainActivity.this);
+                showAllToDos(dbHelper);
             }
         });
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() { //will give you information about which item was clicked
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                DataModel clickedItem = (DataModel) adapterView.getItemAtPosition(position);
+                dbHelper.deleteOne(clickedItem);
+
+                showAllToDos(dbHelper);
+
+                Toast.makeText(MainActivity.this, "Deleted " + clickedItem.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void showAllToDos(DataBaseHelper dbHelper) {
+        todoArrayAdapter = new ArrayAdapter<DataModel>(MainActivity.this, android.R.layout.simple_list_item_1, dbHelper.getAll());
+        lv.setAdapter(todoArrayAdapter);
     }
 }
