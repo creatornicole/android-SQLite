@@ -4,12 +4,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -59,7 +61,8 @@ public class MainActivity extends AppCompatActivity {
                 DataBaseHelper dbHelper = new DataBaseHelper(MainActivity.this);
                 List<DataModel> allTodos = dbHelper.getAll();
 
-                Toast.makeText(MainActivity.this, allTodos.toString(), Toast.LENGTH_LONG).show();
+                ArrayAdapter todoArrayAdapter = new ArrayAdapter<DataModel>(MainActivity.this, android.R.layout.simple_list_item_1, allTodos);
+                lv.setAdapter(todoArrayAdapter);
             }
         });
     }
