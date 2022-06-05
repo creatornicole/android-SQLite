@@ -10,12 +10,13 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
 
     //References to buttons and other controls on the layout
-    Button btn_add;
+    Button btn_add, btn_view;
     EditText et_todo, et_descrip;
     Switch sw;
     ListView lv;
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
         //assign values to variables
         btn_add = findViewById(R.id.btn_add);
+        btn_view = findViewById(R.id.btn_view);
         et_todo = findViewById(R.id.et_todo);
         et_descrip = findViewById(R.id.et_descrip);
         sw = findViewById(R.id.sw);
@@ -48,6 +50,16 @@ public class MainActivity extends AppCompatActivity {
                 boolean success = dbHelper.addOne(dm);
 
                 Toast.makeText(MainActivity.this, "Success: " + success, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        btn_view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DataBaseHelper dbHelper = new DataBaseHelper(MainActivity.this);
+                List<DataModel> allTodos = dbHelper.getAll();
+
+                Toast.makeText(MainActivity.this, allTodos.toString(), Toast.LENGTH_LONG).show();
             }
         });
     }

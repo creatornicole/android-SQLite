@@ -2,10 +2,14 @@ package com.example.studio_sqlite;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Handles all Operations of Database
@@ -53,6 +57,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     }
 
+    /**
+     * method to add new database entry
+     *
+     * @param dModel
+     * @return
+     */
     public boolean addOne(DataModel dModel) {
         SQLiteDatabase db = this.getWritableDatabase(); //for insert actions
         ContentValues cv = new ContentValues(); //Content values stores data in pairs
@@ -69,5 +79,36 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         } else {
             return true;
         }
+    }
+
+    public List<DataModel> getAll() {
+        //create empty list
+        List<DataModel> returnList = new ArrayList<>();
+        //get data from the database
+        String queryString = "SELECT * FROM " + TODO_TABLE;
+        SQLiteDatabase db = this.getReadableDatabase(); //get data from database
+        Cursor cursor = db.rawQuery(queryString, null);
+
+        if(cursor.moveToFirst()) { //returns a true if there were items selected
+            //loop through results, create new todo objects, put them into return list
+            do {
+                int todoID = cursor.getInt(0);
+                String todoTitle = cursor.getString(1);
+                String todoDescrip = cursor.getString(2);
+                boolean important = cursor.getInt(3) == 1 ? true: false;
+
+                DataModel newTodo = new DataModel(todoID, todoTitle, todoDescrip, important);
+                returnList.add(newTodo);
+
+            } while(cursor.moveToNext());
+        } else { //returns a false if no items were selected
+            //failure, to not add anything to the list
+        }
+
+        //clean up, close connection to database and cursor
+        cursor.close();
+        db.close();
+
+        return returnList;
     }
 }
