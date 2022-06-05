@@ -10,6 +10,8 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import java.util.regex.Pattern;
+
 public class MainActivity extends AppCompatActivity {
 
     //References to buttons and other controls on the layout
@@ -34,7 +36,14 @@ public class MainActivity extends AppCompatActivity {
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "Added", Toast.LENGTH_SHORT).show();
+                String toDo = et_todo.getText().toString();
+                if(Pattern.matches("s*", toDo)) {
+                    Toast.makeText(MainActivity.this, "Title needed", Toast.LENGTH_SHORT).show();
+                } else {
+                    DataModel dm = new DataModel(-1, toDo, et_descrip.getText().toString(), sw.isChecked());
+                    Toast.makeText(MainActivity.this, dm.toString(), Toast.LENGTH_LONG).show();
+                }
+
             }
         });
     }
