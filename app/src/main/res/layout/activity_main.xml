@@ -45,7 +45,7 @@
         app:layout_constraintTop_toBottomOf="@+id/et_descrip" />
 
     <Button
-        android:id="@+id/button7"
+        android:id="@+id/btn_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -54,6 +54,7 @@
         app:layout_constraintTop_toBottomOf="@+id/et_descrip" />
 
     <ListView
+        android:id="@+id/lv"
         android:layout_width="409dp"
         android:layout_height="575dp"
         app:layout_constraintBottom_toBottomOf="parent"
