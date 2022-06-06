@@ -45,9 +45,9 @@ public class MainActivity extends AppCompatActivity {
         sw = (Switch) findViewById(R.id.sw);
         lv = (ListView) findViewById(R.id.lv); //intialize ListView
         //Initialize List<DataModel>
-        list = new ArrayList<>();
+        dbHelper = new DataBaseHelper(MainActivity.this);
 
-        showAllToDos(list);
+        showAllToDos(dbHelper);
 
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,8 +61,8 @@ public class MainActivity extends AppCompatActivity {
                 } else if(Pattern.matches("s*", toDoDescrip)) {
                     Toast.makeText(MainActivity.this, "Description is missing", Toast.LENGTH_SHORT).show();
                 } else {
-                    list.add(new DataModel(toDoTitle, toDoDescrip, important));
-                    showAllToDos(list);
+                    dbHelper.addOne(new DataModel(toDoTitle, toDoDescrip, important));
+                    showAllToDos(dbHelper);
                     //empty input fields
                     et_todo.setText("");
                     et_descrip.setText("");
@@ -73,8 +73,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void showAllToDos(ArrayList<DataModel> list) {
-        todoAdapter = new DataAdapter(MainActivity.this, R.layout.list_item, list);
+    public void showAllToDos(DataBaseHelper dbHelper) {
+        todoAdapter = new DataAdapter(MainActivity.this, R.layout.list_item, dbHelper.getAll());
         lv.setAdapter(todoAdapter);
     }
 }
