@@ -73,11 +73,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_IMPORTANT, dModel.isImportant());
 
         long insert = db.insert(TODO_TABLE, null, cv);
-        //if insert is negative number than insert went wrong
-        //if insert is positive number than insert succeeded
-        if(insert == -1) {
+        if(insert == -1) { //if insert is negative number than insert went wrong
             return false;
-        } else {
+        } else { //if insert is positive number than insert succeeded
             return true;
         }
     }
@@ -97,9 +95,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public List<DataModel> getAll() {
+    public ArrayList<DataModel> getAll() {
         //create empty list
-        List<DataModel> returnList = new ArrayList<>();
+        ArrayList<DataModel> returnList = new ArrayList<>();
         //get data from the database
         String queryString = "SELECT * FROM " + TODO_TABLE;
         SQLiteDatabase db = this.getReadableDatabase(); //get data from database
@@ -108,12 +106,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         if(cursor.moveToFirst()) { //returns a true if there were items selected
             //loop through results, create new todo objects, put them into return list
             do {
-                int todoID = cursor.getInt(0);
                 String todoTitle = cursor.getString(1);
                 String todoDescrip = cursor.getString(2);
                 boolean important = cursor.getInt(3) == 1 ? true: false;
 
-                DataModel newTodo = new DataModel(todoID, todoTitle, todoDescrip, important);
+                DataModel newTodo = new DataModel(todoTitle, todoDescrip, important);
                 returnList.add(newTodo);
 
             } while(cursor.moveToNext());

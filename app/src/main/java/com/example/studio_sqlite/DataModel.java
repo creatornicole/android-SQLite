@@ -13,8 +13,7 @@ public class DataModel {
     private boolean isImportant;
 
     //Constructors
-    public DataModel(int id, String title, String desription, boolean isImportant) {
-        this.id = id;
+    public DataModel(String title, String desription, boolean isImportant) {
         this.title = title;
         this.desription = desription;
         this.isImportant = isImportant;
@@ -28,8 +27,7 @@ public class DataModel {
     @Override
     public String toString() {
         return "DataModel{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
+                "title='" + title + '\'' +
                 ", desription='" + desription + '\'' +
                 ", isImportant=" + isImportant +
                 '}';

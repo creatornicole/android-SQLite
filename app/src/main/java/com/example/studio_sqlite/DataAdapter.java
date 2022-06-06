@@ -1,6 +1,8 @@
 package com.example.studio_sqlite;
 
 import android.content.Context;
+import android.media.Image;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,40 +23,38 @@ import java.util.List;
  * @since 2022-06-06
  */
 
-public class DataAdapter<DataModel> extends ArrayAdapter<String> {
+public class DataAdapter extends ArrayAdapter<DataModel> {
 
     /**
      * Attributes
      */
     private Context mContext;
-    private List<String> stringList = new ArrayList<>();
+    private int mResource;
 
-    /**
-     * Constructor of Adapter
-     *
-     * @param context
-     * @param list
-     */
-    public DataAdapter(@NonNull Context context, @NonNull List<DataModel> list) {
-        super(context, 0, (List<String>) list);
+    public DataAdapter(Context context, int resource, ArrayList<DataModel> list) {
+        super(context, resource, list);
+        mContext = context;
+        mResource = resource;
     }
 
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        View listItem = convertView;
-        if(listItem == null)
-            listItem = LayoutInflater.from(mContext).inflate(R.layout.list_item, parent, false);
+        //get the objects information
+        String title = getItem(position).getTitle();
+        String description = getItem(position).getDesription();
+        boolean isImportant = getItem(position).isImportant();
 
-        //get Elements of ListItem
-        TextView text = listItem.findViewById(R.id.text);
-        ImageButton delBtn = listItem.findViewById(R.id.delBtn);
+        //create object with the information
+        DataModel model = new DataModel(title, description, isImportant);
 
-        //get clicked item
-        String current = stringList.get(position);
-        //get Elements from ArrayList
-        List<DataModel> list = (List<DataModel>) MainActivity.getList();
-        //show clicked Item in ListView
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        convertView = inflater.inflate(mResource, parent, false);
 
+        //get TextViews
+        TextView tvTitle = (TextView) convertView.findViewById(R.id.task);
 
-        return null;
+        //set information to TextViews
+        tvTitle.setText(title + ", " + description + ", " + new Boolean(isImportant).toString());
+
+        return convertView;
     }
 }

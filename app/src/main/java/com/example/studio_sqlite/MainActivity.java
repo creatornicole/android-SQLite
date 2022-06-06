@@ -24,74 +24,57 @@ public class MainActivity extends AppCompatActivity {
     private Switch sw;
     private ListView lv;
     private DataAdapter todoAdapter;
-    private static List<DataModel> allTodos;
     private DataBaseHelper dbHelper;
+    private ArrayList<DataModel> list;
 
+    /**
+     * Initialization Method
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         //assign values to variables
-        btn_add = findViewById(R.id.btn_add);
-        btn_view = findViewById(R.id.btn_view);
-        et_todo = findViewById(R.id.et_todo);
-        et_descrip = findViewById(R.id.et_descrip);
-        sw = findViewById(R.id.sw);
-        lv = findViewById(R.id.lv);
+        btn_add = (Button) findViewById(R.id.btn_add);
+        btn_view = (Button) findViewById(R.id.btn_view);
+        et_todo = (EditText) findViewById(R.id.et_todo);
+        et_descrip = (EditText) findViewById(R.id.et_descrip);
+        sw = (Switch) findViewById(R.id.sw);
+        lv = (ListView) findViewById(R.id.lv); //intialize ListView
+        //Initialize List<DataModel>
+        list = new ArrayList<>();
 
-        dbHelper = new DataBaseHelper(MainActivity.this);
+        showAllToDos(list);
 
-        showAllToDos(dbHelper);
-
-        //button click listeners
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String toDo = et_todo.getText().toString();
-                DataModel dm;
-                if(Pattern.matches("s*", toDo)) {
-                    dm = new DataModel(-1, "ERROR", "", false);
+                String toDoTitle = et_todo.getText().toString();
+                String toDoDescrip = et_descrip.getText().toString();
+                boolean important = sw.isChecked();
+
+                if(Pattern.matches("s*", toDoTitle)) {
+                    Toast.makeText(MainActivity.this, "Title is missing", Toast.LENGTH_SHORT).show();
+                } else if(Pattern.matches("s*", toDoDescrip)) {
+                    Toast.makeText(MainActivity.this, "Description is missing", Toast.LENGTH_SHORT).show();
                 } else {
-                    dm = new DataModel(-1, toDo, et_descrip.getText().toString(), sw.isChecked());
+                    list.add(new DataModel(toDoTitle, toDoDescrip, important));
+                    showAllToDos(list);
+                    //empty input fields
+                    et_todo.setText("");
+                    et_descrip.setText("");
+                    sw.setChecked(false);
                 }
-
-                DataBaseHelper dbHelper = new DataBaseHelper(MainActivity.this);
-                boolean success = dbHelper.addOne(dm);
-
-                Toast.makeText(MainActivity.this, "Success: " + success, Toast.LENGTH_SHORT).show();
-
-                showAllToDos(dbHelper);
             }
         });
 
-        btn_view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dbHelper = new DataBaseHelper(MainActivity.this);
-                showAllToDos(dbHelper);
-            }
-        });
-
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() { //will give you information about which item was clicked
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                DataModel clickedItem = (DataModel) adapterView.getItemAtPosition(position);
-                dbHelper.deleteOne(clickedItem);
-
-                showAllToDos(dbHelper);
-
-                Toast.makeText(MainActivity.this, "Deleted " + clickedItem.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
-    private void showAllToDos(DataBaseHelper dbHelper) {
-        todoAdapter = new DataAdapter<DataModel>(MainActivity.this, dbHelper.getAll());
+    public void showAllToDos(ArrayList<DataModel> list) {
+        todoAdapter = new DataAdapter(MainActivity.this, R.layout.list_item, list);
         lv.setAdapter(todoAdapter);
-    }
-
-    public static List<DataModel> getList() {
-        return allTodos;
     }
 }
