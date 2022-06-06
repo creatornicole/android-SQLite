@@ -19,13 +19,13 @@ import java.util.regex.Pattern;
 public class MainActivity extends AppCompatActivity {
 
     //References to buttons and other controls on the layout
-    Button btn_add, btn_view;
-    EditText et_todo, et_descrip;
-    Switch sw;
-    ListView lv;
-    ArrayAdapter todoArrayAdapter;
-    List<DataModel> allTodos;
-    DataBaseHelper dbHelper;
+    private Button btn_add, btn_view;
+    private EditText et_todo, et_descrip;
+    private Switch sw;
+    private ListView lv;
+    private DataAdapter todoAdapter;
+    private static List<DataModel> allTodos;
+    private DataBaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +87,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showAllToDos(DataBaseHelper dbHelper) {
-        todoArrayAdapter = new ArrayAdapter<DataModel>(MainActivity.this, android.R.layout.simple_list_item_1, dbHelper.getAll());
-        lv.setAdapter(todoArrayAdapter);
+        todoAdapter = new DataAdapter<DataModel>(MainActivity.this, dbHelper.getAll());
+        lv.setAdapter(todoAdapter);
+    }
+
+    public static List<DataModel> getList() {
+        return allTodos;
     }
 }
