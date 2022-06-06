@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private Switch sw;
     private ListView lv;
     private DataAdapter todoAdapter;
-    private DataBaseHelper dbHelper;
+    private static DataBaseHelper dbHelper;
     private ArrayList<DataModel> list;
 
     /**
@@ -76,5 +76,9 @@ public class MainActivity extends AppCompatActivity {
     public void showAllToDos(DataBaseHelper dbHelper) {
         todoAdapter = new DataAdapter(MainActivity.this, R.layout.list_item, dbHelper.getAll());
         lv.setAdapter(todoAdapter);
+    }
+
+    public static DataBaseHelper getDbHelper() {
+        return dbHelper;
     }
 }

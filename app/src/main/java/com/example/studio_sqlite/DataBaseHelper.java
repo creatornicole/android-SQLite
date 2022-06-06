@@ -84,7 +84,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         //if DataModel is found in the database, delete it and return true
         //if it is not found, return false
         SQLiteDatabase db = this.getWritableDatabase();
-        String queryString = "DELETE FROM " + TODO_TABLE + " WHERE " + COLUMN_ID + " = " + dModel.getId();
+
+        String queryString = "DELETE FROM " + TODO_TABLE + " WHERE " + COLUMN_ID + " = " + ;
 
         Cursor cursor = db.rawQuery(queryString, null);
 

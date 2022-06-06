@@ -27,7 +27,8 @@ public class DataModel {
     @Override
     public String toString() {
         return "DataModel{" +
-                "title='" + title + '\'' +
+                "id=" + id +
+                ", title='" + title + '\'' +
                 ", desription='" + desription + '\'' +
                 ", isImportant=" + isImportant +
                 '}';
