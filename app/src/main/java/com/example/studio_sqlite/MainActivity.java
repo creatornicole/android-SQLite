@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 public class MainActivity extends AppCompatActivity {
 
     //References to buttons and other controls on the layout
-    private Button btn_add, btn_view;
+    private Button btn_add;
     private EditText et_todo, et_descrip;
     private Switch sw;
     private ListView lv;
@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
 
         //assign values to variables
         btn_add = (Button) findViewById(R.id.btn_add);
-        btn_view = (Button) findViewById(R.id.btn_view);
         et_todo = (EditText) findViewById(R.id.et_todo);
         et_descrip = (EditText) findViewById(R.id.et_descrip);
         sw = (Switch) findViewById(R.id.sw);
@@ -70,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
 
     }
 
