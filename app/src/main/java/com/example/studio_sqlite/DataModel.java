@@ -19,6 +19,13 @@ public class DataModel {
         this.isImportant = isImportant;
     }
 
+    public DataModel(int id, String title, String desription, boolean isImportant) {
+        this.id = id;
+        this.title = title;
+        this.desription = desription;
+        this.isImportant = isImportant;
+    }
+
     public DataModel() {
 
     }

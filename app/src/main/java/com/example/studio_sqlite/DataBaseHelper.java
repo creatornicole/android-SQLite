@@ -5,11 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 
 /**
  * Handles all Operations of Database
@@ -73,6 +75,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_IMPORTANT, dModel.isImportant());
 
         long insert = db.insert(TODO_TABLE, null, cv);
+
+        //clean up, close connection to database and cursor
+        db.close();
         if(insert == -1) { //if insert is negative number than insert went wrong
             return false;
         } else { //if insert is positive number than insert succeeded
@@ -85,7 +90,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         //if it is not found, return false
         SQLiteDatabase db = this.getWritableDatabase();
 
-        String queryString = "DELETE FROM " + TODO_TABLE + " WHERE " + COLUMN_ID + " = " + ;
+        String queryString = "DELETE FROM " + TODO_TABLE
+                + " WHERE " + COLUMN_TODO_TITLE + " = " + dModel.getTitle()
+                + " AND " + COLUMN_TODO_DESCRIPTION + " = " + dModel.getDesription();
 
         Cursor cursor = db.rawQuery(queryString, null);
 
@@ -96,7 +103,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public ArrayList<DataModel> getAll() {
+    public ArrayList<DataModel> getAllAsList() {
         //create empty list
         ArrayList<DataModel> returnList = new ArrayList<>();
         //get data from the database
@@ -124,5 +131,41 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.close();
 
         return returnList;
+    }
+
+    private TreeMap<String, ArrayList<String>> getIdPairs() {
+        ArrayList<String> value = new ArrayList<String>();
+        TreeMap<String, ArrayList<String>> map = new TreeMap<String, ArrayList<String>>();
+
+        //get data from database
+        String queryString = "SELECT * FROM " + TODO_TABLE;
+        SQLiteDatabase db = this.getWritableDatabase(); //get data from database
+        Cursor cursor = db.rawQuery(queryString, null);
+
+        String id, title, descrip, importance;
+        if(cursor.moveToFirst()) {
+            do {
+                id = cursor.getString(0);
+                title = cursor.getString(1);
+                descrip = cursor.getString(2);
+                importance = Integer.toString(cursor.getInt(3));
+
+                value.add(title);
+                value.add(descrip);
+                value.add(importance);
+
+                map.put(id, value);
+
+                //clear array again
+                for(String todoInfos: value) {
+                    todoInfos = null;
+                }
+            } while(cursor.moveToNext());
+        }
+
+        //clean up, close connection to database and cursor
+        cursor.close();
+        db.close();
+        return map;
     }
 }

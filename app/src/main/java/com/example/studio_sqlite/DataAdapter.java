@@ -8,9 +8,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +37,7 @@ public class DataAdapter extends ArrayAdapter<DataModel> {
     private Context mContext;
     private int mResource;
 
+
     public DataAdapter(Context context, int resource, ArrayList<DataModel> list) {
         super(context, resource, list);
         mContext = context;
@@ -58,18 +61,6 @@ public class DataAdapter extends ArrayAdapter<DataModel> {
 
         //set information to TextViews
         tvTitle.setText(title + ", " + description + ", " + new Boolean(isImportant).toString());
-
-        //delete function
-        //get delete Button
-        ImageButton delBtn = (ImageButton) convertView.findViewById(R.id.delBtn);
-        //onClickListener
-        delBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DataModel dModel = getItem(position);
-                MainActivity.getDbHelper().deleteOne(dModel);
-            }
-        });
 
 
         return convertView;

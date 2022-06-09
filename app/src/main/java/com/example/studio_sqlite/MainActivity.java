@@ -1,17 +1,21 @@
 package com.example.studio_sqlite;
 
+import androidx.annotation.ContentView;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -24,8 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private Switch sw;
     private ListView lv;
     private DataAdapter todoAdapter;
-    private static DataBaseHelper dbHelper;
-    private ArrayList<DataModel> list;
+    private DataBaseHelper dbHelper;
 
     /**
      * Initialization Method
@@ -37,17 +40,28 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        dbHelper = new DataBaseHelper(MainActivity.this);
+
+        assignVariables();
+        registerClick();
+        showAllToDos(dbHelper);
+    }
+
+    private void assignVariables() {
         //assign values to variables
         btn_add = (Button) findViewById(R.id.btn_add);
         et_todo = (EditText) findViewById(R.id.et_todo);
         et_descrip = (EditText) findViewById(R.id.et_descrip);
         sw = (Switch) findViewById(R.id.sw);
-        lv = (ListView) findViewById(R.id.lv); //intialize ListView
-        //Initialize List<DataModel>
-        dbHelper = new DataBaseHelper(MainActivity.this);
+        lv = (ListView) findViewById(R.id.lv);
+    }
 
-        showAllToDos(dbHelper);
+    private void showAllToDos(DataBaseHelper dbHelper) {
+        todoAdapter = new DataAdapter(MainActivity.this, R.layout.list_item, dbHelper.getAllAsList());
+        lv.setAdapter(todoAdapter);
+    }
 
+    private void registerClick() {
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -60,8 +74,11 @@ public class MainActivity extends AppCompatActivity {
                 } else if(Pattern.matches("s*", toDoDescrip)) {
                     Toast.makeText(MainActivity.this, "Description is missing", Toast.LENGTH_SHORT).show();
                 } else {
-                    dbHelper.addOne(new DataModel(toDoTitle, toDoDescrip, important));
+                    DataModel dModel = new DataModel(toDoTitle, toDoDescrip, important);
+                    dbHelper.addOne(dModel);
+
                     showAllToDos(dbHelper);
+
                     //empty input fields
                     et_todo.setText("");
                     et_descrip.setText("");
@@ -69,16 +86,5 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-
-    }
-
-    public void showAllToDos(DataBaseHelper dbHelper) {
-        todoAdapter = new DataAdapter(MainActivity.this, R.layout.list_item, dbHelper.getAll());
-        lv.setAdapter(todoAdapter);
-    }
-
-    public static DataBaseHelper getDbHelper() {
-        return dbHelper;
     }
 }
