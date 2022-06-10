@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
     //References to buttons and other controls on the layout
     private Button btn_add;
-    private EditText et_todo, et_descrip;
+    private EditText et_todo;
     private Switch sw;
     private ListView lv;
     private DataAdapter todoAdapter;
@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showAllToDos(DataBaseHelper dbHelper) {
-        todoAdapter = new DataAdapter(MainActivity.this, R.layout.list_item, dbHelper.getAllAsList());
+        todoAdapter = new DataAdapter(MainActivity.this, R.layout.list_item, dbHelper.getAllAsList(), dbHelper);
         lv.setAdapter(todoAdapter);
     }
 
@@ -67,15 +67,16 @@ public class MainActivity extends AppCompatActivity {
 
                 if(Pattern.matches("s*", toDoTitle)) {
                     Toast.makeText(MainActivity.this, "Title is missing", Toast.LENGTH_SHORT).show();
+                } else if(dbHelper.existsInDB(new DataModel(toDoTitle))) {
+                    Toast.makeText(MainActivity.this, "Already added as ToDo", Toast.LENGTH_SHORT).show();
                 } else {
                     DataModel dModel = new DataModel(toDoTitle);
                     dbHelper.addOne(dModel);
 
                     showAllToDos(dbHelper);
-
-                    //empty input field
-                    et_todo.setText("");
                 }
+                //empty input field
+                et_todo.setText("");
             }
         });
     }

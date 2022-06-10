@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,12 +37,16 @@ public class DataAdapter extends ArrayAdapter<DataModel> {
      */
     private Context mContext;
     private int mResource;
+    private ArrayList<DataModel> mList;
+    private DataBaseHelper mDbHelper;
 
 
-    public DataAdapter(Context context, int resource, ArrayList<DataModel> list) {
+    public DataAdapter(Context context, int resource, ArrayList<DataModel> list, DataBaseHelper dbHelper) {
         super(context, resource, list);
         mContext = context;
         mResource = resource;
+        mList = list;
+        mDbHelper = dbHelper;
     }
 
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -59,6 +64,16 @@ public class DataAdapter extends ArrayAdapter<DataModel> {
 
         //set information to TextViews
         tvTitle.setText(title);
+
+        //delete function
+        ImageView delView = (ImageView) convertView.findViewById(R.id.delView);
+        delView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDbHelper.deleteOne(model);
+            }
+        });
+
 
 
         return convertView;

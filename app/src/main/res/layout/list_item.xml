@@ -6,7 +6,7 @@
 
     <TextView
         android:id="@+id/task"
-        android:layout_width="310dp"
+        android:layout_width="330dp"
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:layout_marginTop="10dp"

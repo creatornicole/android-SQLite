@@ -22,11 +22,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String TODO_TABLE = "TODO_TABLE";
     public static final String COLUMN_ID = "ID";
     public static final String COLUMN_TODO_TITLE = "TODO_TITLE";
-    public static final String COLUMN_TODO_DESCRIPTION = "TODO_DESCRIPTION";
-    public static final String COLUMN_IMPORTANT = "IMPORTANT";
+    private Context mContext;
 
     public DataBaseHelper(@Nullable Context context) {
         super(context, "todo.db", null, 1);
+        mContext = context;
     }
 
     /**
@@ -39,9 +39,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         String createTableStatement = "CREATE TABLE " + TODO_TABLE
                 + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + COLUMN_TODO_TITLE + " TEXT, "
-                + COLUMN_TODO_DESCRIPTION + " TEXT, "
-                + COLUMN_IMPORTANT + " BOOL)";
+                + COLUMN_TODO_TITLE + " TEXT)";
 
         db.execSQL(createTableStatement);
         //create new Table
@@ -89,7 +87,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         String queryString = "DELETE FROM " + TODO_TABLE
-                + " WHERE " + COLUMN_TODO_TITLE + " = " + dModel.getTitle();
+                + " WHERE " + COLUMN_TODO_TITLE + " = " + "\"" + dModel.getTitle() + "\"";;
 
         Cursor cursor = db.rawQuery(queryString, null);
 
@@ -126,5 +124,19 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.close();
 
         return returnList;
+    }
+
+    public boolean existsInDB(DataModel dModel) {
+        SQLiteDatabase db = this.getWritableDatabase(); //for insert actions
+        String queryString = "SELECT * FROM " + TODO_TABLE
+                + " WHERE " + COLUMN_TODO_TITLE + " = " + "\"" + dModel.getTitle() + "\"";
+
+        Cursor cursor = db.rawQuery(queryString, null);
+
+        if(cursor.moveToFirst()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
