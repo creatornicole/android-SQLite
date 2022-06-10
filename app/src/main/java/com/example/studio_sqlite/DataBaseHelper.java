@@ -71,8 +71,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues(); //Content values stores data in pairs
 
         cv.put(COLUMN_TODO_TITLE, dModel.getTitle());
-        cv.put(COLUMN_TODO_DESCRIPTION, dModel.getDesription());
-        cv.put(COLUMN_IMPORTANT, dModel.isImportant());
 
         long insert = db.insert(TODO_TABLE, null, cv);
 
@@ -91,8 +89,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         String queryString = "DELETE FROM " + TODO_TABLE
-                + " WHERE " + COLUMN_TODO_TITLE + " = " + dModel.getTitle()
-                + " AND " + COLUMN_TODO_DESCRIPTION + " = " + dModel.getDesription();
+                + " WHERE " + COLUMN_TODO_TITLE + " = " + dModel.getTitle();
 
         Cursor cursor = db.rawQuery(queryString, null);
 
@@ -115,10 +112,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             //loop through results, create new todo objects, put them into return list
             do {
                 String todoTitle = cursor.getString(1);
-                String todoDescrip = cursor.getString(2);
-                boolean important = cursor.getInt(3) == 1 ? true: false;
 
-                DataModel newTodo = new DataModel(todoTitle, todoDescrip, important);
+                DataModel newTodo = new DataModel(todoTitle);
                 returnList.add(newTodo);
 
             } while(cursor.moveToNext());
@@ -131,41 +126,5 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.close();
 
         return returnList;
-    }
-
-    private TreeMap<String, ArrayList<String>> getIdPairs() {
-        ArrayList<String> value = new ArrayList<String>();
-        TreeMap<String, ArrayList<String>> map = new TreeMap<String, ArrayList<String>>();
-
-        //get data from database
-        String queryString = "SELECT * FROM " + TODO_TABLE;
-        SQLiteDatabase db = this.getWritableDatabase(); //get data from database
-        Cursor cursor = db.rawQuery(queryString, null);
-
-        String id, title, descrip, importance;
-        if(cursor.moveToFirst()) {
-            do {
-                id = cursor.getString(0);
-                title = cursor.getString(1);
-                descrip = cursor.getString(2);
-                importance = Integer.toString(cursor.getInt(3));
-
-                value.add(title);
-                value.add(descrip);
-                value.add(importance);
-
-                map.put(id, value);
-
-                //clear array again
-                for(String todoInfos: value) {
-                    todoInfos = null;
-                }
-            } while(cursor.moveToNext());
-        }
-
-        //clean up, close connection to database and cursor
-        cursor.close();
-        db.close();
-        return map;
     }
 }

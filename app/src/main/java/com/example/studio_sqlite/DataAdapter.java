@@ -47,11 +47,9 @@ public class DataAdapter extends ArrayAdapter<DataModel> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         //get the objects information
         String title = getItem(position).getTitle();
-        String description = getItem(position).getDesription();
-        boolean isImportant = getItem(position).isImportant();
 
         //create object with the information
-        DataModel model = new DataModel(title, description, isImportant);
+        DataModel model = new DataModel(title);
 
         LayoutInflater inflater = LayoutInflater.from(mContext);
         convertView = inflater.inflate(mResource, parent, false);
@@ -60,7 +58,7 @@ public class DataAdapter extends ArrayAdapter<DataModel> {
         TextView tvTitle = (TextView) convertView.findViewById(R.id.task);
 
         //set information to TextViews
-        tvTitle.setText(title + ", " + description + ", " + new Boolean(isImportant).toString());
+        tvTitle.setText(title);
 
 
         return convertView;
