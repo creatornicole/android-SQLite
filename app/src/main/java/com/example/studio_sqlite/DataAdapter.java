@@ -33,25 +33,35 @@ import java.util.List;
 
 public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
 
+    ArrayList<String> todos;
+
+    public DataAdapter(ArrayList<String> todos) {
+        this.todos = todos;
+    }
+
     @NonNull
     @Override
     public DataAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return null;
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
+        return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull DataAdapter.ViewHolder holder, int position) {
-
+        holder.task.setText(todos.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return todos.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+        public TextView task;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            task = itemView.findViewById(R.id.task);
         }
     }
 }

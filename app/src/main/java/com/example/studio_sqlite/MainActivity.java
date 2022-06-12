@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView rv;
     private DataAdapter todoAdapter;
     private DataBaseHelper dbHelper;
+    private ArrayList<String> todos;
 
     /**
      * Initialization Method
@@ -46,8 +47,13 @@ public class MainActivity extends AppCompatActivity {
 
         assignVariables();
 
+        for(int i = 0; i < 10; i++) {
+            todos.add("Example Task " + i);
+        }
+
+        //pass todos to adapter
         rv.setLayoutManager(new LinearLayoutManager(this));
-        todoAdapter = new DataAdapter();
+        todoAdapter = new DataAdapter(todos);
         rv.setAdapter(todoAdapter);
 
         registerClick();
@@ -59,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         btn_add = findViewById(R.id.btn_add);
         et_todo = findViewById(R.id.et_todo);
         rv = findViewById(R.id.rv);
+        todos = new ArrayList<>();
     }
 
     private void showAllToDos(DataBaseHelper dbHelper) {

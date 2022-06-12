@@ -22,8 +22,8 @@
         android:id="@+id/btn_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
         android:text="Add"
+        android:layout_marginStart="12dp"
         app:layout_constraintStart_toEndOf="@+id/sw"
         app:layout_constraintTop_toBottomOf="@+id/et_descrip" />
 
@@ -32,10 +32,11 @@
         android:id="@+id/rv"
         android:layout_width="409dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintTop_toBottomOf="@+id/btn_view" />
 
 
