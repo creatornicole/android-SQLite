@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
@@ -30,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
     private Switch sw;
     private RecyclerView rv;
     private DataAdapter todoAdapter;
-    private DataBaseHelper dbHelper;
     private ArrayList<String> todos;
 
     /**
@@ -42,8 +42,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        dbHelper = new DataBaseHelper(MainActivity.this);
 
         assignVariables();
 
@@ -57,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
         rv.setAdapter(todoAdapter);
 
         registerClick();
-        showAllToDos(dbHelper);
     }
 
     private void assignVariables() {
@@ -68,10 +65,6 @@ public class MainActivity extends AppCompatActivity {
         todos = new ArrayList<>();
     }
 
-    private void showAllToDos(DataBaseHelper dbHelper) {
-        //TODO: Update RecyclerView
-    }
-
     private void registerClick() {
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,13 +73,6 @@ public class MainActivity extends AppCompatActivity {
 
                 if(Pattern.matches("s*", toDoTitle)) {
                     Toast.makeText(MainActivity.this, "Title is missing", Toast.LENGTH_SHORT).show();
-                } else if(dbHelper.existsInDB(new DataModel(toDoTitle))) {
-                    Toast.makeText(MainActivity.this, "Already added as ToDo", Toast.LENGTH_SHORT).show();
-                } else {
-                    DataModel dModel = new DataModel(toDoTitle);
-                    dbHelper.addOne(dModel);
-
-                    showAllToDos(dbHelper);
                 }
                 //empty input field
                 et_todo.setText("");
