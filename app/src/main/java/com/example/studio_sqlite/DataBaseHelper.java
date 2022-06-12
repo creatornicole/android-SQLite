@@ -5,11 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 
 /**
  * Handles all Operations of Database
@@ -20,11 +22,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String TODO_TABLE = "TODO_TABLE";
     public static final String COLUMN_ID = "ID";
     public static final String COLUMN_TODO_TITLE = "TODO_TITLE";
-    public static final String COLUMN_TODO_DESCRIPTION = "TODO_DESCRIPTION";
-    public static final String COLUMN_IMPORTANT = "IMPORTANT";
+    private Context mContext;
 
     public DataBaseHelper(@Nullable Context context) {
         super(context, "todo.db", null, 1);
+        mContext = context;
     }
 
     /**
@@ -37,9 +39,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         String createTableStatement = "CREATE TABLE " + TODO_TABLE
                 + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + COLUMN_TODO_TITLE + " TEXT, "
-                + COLUMN_TODO_DESCRIPTION + " TEXT, "
-                + COLUMN_IMPORTANT + " BOOL)";
+                + COLUMN_TODO_TITLE + " TEXT)";
 
         db.execSQL(createTableStatement);
         //create new Table
@@ -69,15 +69,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues(); //Content values stores data in pairs
 
         cv.put(COLUMN_TODO_TITLE, dModel.getTitle());
-        cv.put(COLUMN_TODO_DESCRIPTION, dModel.getDesription());
-        cv.put(COLUMN_IMPORTANT, dModel.isImportant());
 
         long insert = db.insert(TODO_TABLE, null, cv);
-        //if insert is negative number than insert went wrong
-        //if insert is positive number than insert succeeded
-        if(insert == -1) {
+
+        //clean up, close connection to database and cursor
+        db.close();
+        if(insert == -1) { //if insert is negative number than insert went wrong
             return false;
-        } else {
+        } else { //if insert is positive number than insert succeeded
             return true;
         }
     }
@@ -86,7 +85,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         //if DataModel is found in the database, delete it and return true
         //if it is not found, return false
         SQLiteDatabase db = this.getWritableDatabase();
-        String queryString = "DELETE FROM " + TODO_TABLE + " WHERE " + COLUMN_ID + " = " + dModel.getId();
+
+        String queryString = "DELETE FROM " + TODO_TABLE
+                + " WHERE " + COLUMN_TODO_TITLE + " = " + "\"" + dModel.getTitle() + "\"";;
 
         Cursor cursor = db.rawQuery(queryString, null);
 
@@ -97,9 +98,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public List<DataModel> getAll() {
+    public ArrayList<DataModel> getAllAsList() {
         //create empty list
-        List<DataModel> returnList = new ArrayList<>();
+        ArrayList<DataModel> returnList = new ArrayList<>();
         //get data from the database
         String queryString = "SELECT * FROM " + TODO_TABLE;
         SQLiteDatabase db = this.getReadableDatabase(); //get data from database
@@ -108,12 +109,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         if(cursor.moveToFirst()) { //returns a true if there were items selected
             //loop through results, create new todo objects, put them into return list
             do {
-                int todoID = cursor.getInt(0);
                 String todoTitle = cursor.getString(1);
-                String todoDescrip = cursor.getString(2);
-                boolean important = cursor.getInt(3) == 1 ? true: false;
 
-                DataModel newTodo = new DataModel(todoID, todoTitle, todoDescrip, important);
+                DataModel newTodo = new DataModel(todoTitle);
                 returnList.add(newTodo);
 
             } while(cursor.moveToNext());
@@ -126,5 +124,19 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.close();
 
         return returnList;
+    }
+
+    public boolean existsInDB(DataModel dModel) {
+        SQLiteDatabase db = this.getWritableDatabase(); //for insert actions
+        String queryString = "SELECT * FROM " + TODO_TABLE
+                + " WHERE " + COLUMN_TODO_TITLE + " = " + "\"" + dModel.getTitle() + "\"";
+
+        Cursor cursor = db.rawQuery(queryString, null);
+
+        if(cursor.moveToFirst()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
