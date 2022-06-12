@@ -2,6 +2,8 @@ package com.example.studio_sqlite;
 
 import androidx.annotation.ContentView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.media.Image;
 import android.os.Bundle;
@@ -26,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btn_add;
     private EditText et_todo;
     private Switch sw;
-    private ListView lv;
+    private RecyclerView rv;
     private DataAdapter todoAdapter;
     private DataBaseHelper dbHelper;
 
@@ -43,20 +45,24 @@ public class MainActivity extends AppCompatActivity {
         dbHelper = new DataBaseHelper(MainActivity.this);
 
         assignVariables();
+
+        rv.setLayoutManager(new LinearLayoutManager(this));
+        todoAdapter = new DataAdapter();
+        rv.setAdapter(todoAdapter);
+
         registerClick();
         showAllToDos(dbHelper);
     }
 
     private void assignVariables() {
         //assign values to variables
-        btn_add = (Button) findViewById(R.id.btn_add);
-        et_todo = (EditText) findViewById(R.id.et_todo);
-        lv = (ListView) findViewById(R.id.lv);
+        btn_add = findViewById(R.id.btn_add);
+        et_todo = findViewById(R.id.et_todo);
+        rv = findViewById(R.id.rv);
     }
 
     private void showAllToDos(DataBaseHelper dbHelper) {
-        todoAdapter = new DataAdapter(MainActivity.this, R.layout.list_item, dbHelper.getAllAsList(), dbHelper);
-        lv.setAdapter(todoAdapter);
+        //TODO: Update RecyclerView
     }
 
     private void registerClick() {

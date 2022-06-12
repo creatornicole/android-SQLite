@@ -28,8 +28,8 @@
         app:layout_constraintTop_toBottomOf="@+id/et_descrip" />
 
 
-    <ListView
-        android:id="@+id/lv"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv"
         android:layout_width="409dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
