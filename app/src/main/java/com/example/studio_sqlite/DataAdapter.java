@@ -67,10 +67,20 @@ public class DataAdapter extends ArrayAdapter<DataModel> {
 
         //delete function
         ImageView delView = (ImageView) convertView.findViewById(R.id.delView);
+        delView.setTag(position); //sets the tag with the position in the list
         delView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Integer position = new Integer(view.getTag().toString()); // gets the position from the tag
+                DataModel model = mList.get(position); // gets the respective DataModel from the ArrayList
+
                 mDbHelper.deleteOne(model);
+                ArrayList<DataModel> newlist = mDbHelper.getAllAsList();
+                mList.clear();
+                for (DataModel dm: newlist) {
+                    mList.add(dm);
+                    notifyDataSetChanged();
+                }
             }
         });
         return convertView;

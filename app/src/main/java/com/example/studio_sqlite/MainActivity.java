@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.media.Image;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -43,8 +44,9 @@ public class MainActivity extends AppCompatActivity {
 
         assignVariables();
         registerClick();
-        showAllToDos(dbHelper);
+        showAllToDos(dbHelper); // creates a new instance of the adapter each time it is called
     }
+
 
     private void assignVariables() {
         //assign values to variables
@@ -76,16 +78,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 //empty input field
                 et_todo.setText("");
-            }
-        });
-
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                DataModel clickedItem = (DataModel) adapterView.getItemAtPosition(position);
-                dbHelper.deleteOne(clickedItem);
-
-                showAllToDos(dbHelper);
             }
         });
     }
