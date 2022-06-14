@@ -2,10 +2,7 @@ package com.example.studio_sqlite;
 
 import androidx.annotation.ContentView;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
 import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
@@ -29,9 +26,9 @@ public class MainActivity extends AppCompatActivity {
     private Button btn_add;
     private EditText et_todo;
     private Switch sw;
-    private RecyclerView rv;
+    private ListView lv;
     private DataAdapter todoAdapter;
-    private ArrayList<String> todos;
+    private DataBaseHelper dbHelper;
 
     /**
      * Initialization Method
@@ -43,26 +40,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        dbHelper = new DataBaseHelper(MainActivity.this);
+
         assignVariables();
-
-        for(int i = 0; i < 10; i++) {
-            todos.add("Example Task " + i);
-        }
-
-        //pass todos to adapter
-        rv.setLayoutManager(new LinearLayoutManager(this));
-        todoAdapter = new DataAdapter(todos);
-        rv.setAdapter(todoAdapter);
-
         registerClick();
+        showAllToDos(dbHelper);
     }
 
     private void assignVariables() {
         //assign values to variables
-        btn_add = findViewById(R.id.btn_add);
-        et_todo = findViewById(R.id.et_todo);
-        rv = findViewById(R.id.rv);
-        todos = new ArrayList<>();
+        btn_add = (Button) findViewById(R.id.btn_add);
+        et_todo = (EditText) findViewById(R.id.et_todo);
+        lv = (ListView) findViewById(R.id.lv);
+    }
+
+    private void showAllToDos(DataBaseHelper dbHelper) {
+        todoAdapter = new DataAdapter(MainActivity.this, R.layout.list_item, dbHelper.getAllAsList(), dbHelper);
+        lv.setAdapter(todoAdapter);
     }
 
     private void registerClick() {
@@ -73,6 +67,13 @@ public class MainActivity extends AppCompatActivity {
 
                 if(Pattern.matches("s*", toDoTitle)) {
                     Toast.makeText(MainActivity.this, "Title is missing", Toast.LENGTH_SHORT).show();
+                } else if(dbHelper.existsInDB(new DataModel(toDoTitle))) {
+                    Toast.makeText(MainActivity.this, "Already added as ToDo", Toast.LENGTH_SHORT).show();
+                } else {
+                    DataModel dModel = new DataModel(toDoTitle);
+                    dbHelper.addOne(dModel);
+
+                    showAllToDos(dbHelper);
                 }
                 //empty input field
                 et_todo.setText("");

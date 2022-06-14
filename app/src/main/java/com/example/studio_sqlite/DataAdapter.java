@@ -19,7 +19,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,40 +27,55 @@ import java.util.List;
  * Custom Adapter for Customized Design of ListView-Items
  *
  * @author Nicole Gottschall
- * @since 2022-06-12
+ * @since 2022-06-06
  */
 
-public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
+public class DataAdapter extends ArrayAdapter<DataModel> {
 
-    ArrayList<String> todos;
+    /**
+     * Attributes
+     */
+    private Context mContext;
+    private int mResource;
+    private ArrayList<DataModel> mList;
+    private DataBaseHelper mDbHelper;
 
-    public DataAdapter(ArrayList<String> todos) {
-        this.todos = todos;
+
+    public DataAdapter(Context context, int resource, ArrayList<DataModel> list, DataBaseHelper dbHelper) {
+        super(context, resource, list);
+        mContext = context;
+        mResource = resource;
+        mList = list;
+        mDbHelper = dbHelper;
     }
 
-    @NonNull
-    @Override
-    public DataAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
-        return new ViewHolder(view);
-    }
+    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        //get the objects information
+        String title = getItem(position).getTitle();
 
-    @Override
-    public void onBindViewHolder(@NonNull DataAdapter.ViewHolder holder, int position) {
-        holder.task.setText(todos.get(position));
-    }
+        //create object with the information
+        DataModel model = new DataModel(title);
 
-    @Override
-    public int getItemCount() {
-        return todos.size();
-    }
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        convertView = inflater.inflate(mResource, parent, false);
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView task;
+        //get TextViews
+        TextView tvTitle = (TextView) convertView.findViewById(R.id.task);
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            task = itemView.findViewById(R.id.task);
-        }
+        //set information to TextViews
+        tvTitle.setText(title);
+
+        //delete function
+        ImageView delView = (ImageView) convertView.findViewById(R.id.delView);
+        delView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDbHelper.deleteOne(model);
+            }
+        });
+
+
+
+        return convertView;
     }
 }
