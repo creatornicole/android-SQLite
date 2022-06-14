@@ -73,9 +73,6 @@ public class DataAdapter extends ArrayAdapter<DataModel> {
                 mDbHelper.deleteOne(model);
             }
         });
-
-
-
         return convertView;
     }
 }

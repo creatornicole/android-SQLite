@@ -21,13 +21,12 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
-
     //References to buttons and other controls on the layout
     private Button btn_add;
     private EditText et_todo;
     private Switch sw;
-    private ListView lv;
-    private DataAdapter todoAdapter;
+    private static ListView lv;
+    private static DataAdapter todoAdapter;
     private DataBaseHelper dbHelper;
 
     /**
@@ -54,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         lv = (ListView) findViewById(R.id.lv);
     }
 
-    private void showAllToDos(DataBaseHelper dbHelper) {
+    public void showAllToDos(DataBaseHelper dbHelper) {
         todoAdapter = new DataAdapter(MainActivity.this, R.layout.list_item, dbHelper.getAllAsList(), dbHelper);
         lv.setAdapter(todoAdapter);
     }
@@ -77,6 +76,16 @@ public class MainActivity extends AppCompatActivity {
                 }
                 //empty input field
                 et_todo.setText("");
+            }
+        });
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                DataModel clickedItem = (DataModel) adapterView.getItemAtPosition(position);
+                dbHelper.deleteOne(clickedItem);
+
+                showAllToDos(dbHelper);
             }
         });
     }
